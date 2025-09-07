@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اختبار شخصيتك التقنية</title>
+<style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f0f4f7; }
+    h1 { text-align: center; color: #333; margin-bottom: 30px; }
+    .question { background: #fff; padding: 20px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 3px 8px rgba(0,0,0,0.1); }
+    button { display: block; width: 100%; margin: 10px 0; padding: 12px; font-size: 16px; border: none; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+    button:hover { opacity: 0.9; }
+    .explorer { background-color: #ffcc00; color: #333; }
+    .practical { background-color: #00aaff; color: #fff; }
+    .traditional { background-color: #66cc66; color: #fff; }
+    .result { font-weight: bold; font-size: 18px; margin-top: 25px; padding: 20px; border-radius: 12px; background: #fff; box-shadow: 0 3px 8px rgba(0,0,0,0.1); line-height: 1.6; text-align: center; }
+    .person-icon { width: 60px; height: 60px; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+
+<h1>اختبار شخصيتك التقنية</h1>
+<div id="quiz"></div>
+<div class="result" id="result"></div>
+
+<script>
+const questions = [
+    { q: "كم ساعة تقريبًا تقضي يوميًا على الهاتف أو الحاسوب؟", a: ["أ) أكثر من 6 ساعات", "ب) بين 3 – 6 ساعات", "ج) أقل من 3 ساعات"] },
+    { q: "عند شرائك جهازًا جديدًا:", a: ["أ) أقرأ الدليل كاملًا", "ب) أتعلم بالتجربة", "ج) أطلب من شخص أن يشرح لي"] },
+    { q: "ما التطبيق الذي تستخدمه أكثر يوميًا؟", a: ["أ) للتواصل الاجتماعي", "ب) للتعلم أو العمل", "ج) للألعاب أو الترفيه"] },
+    { q: "إذا وصلتك رسالة أو رابط مشبوه:", a: ["أ) أتجاهله فورًا", "ب) أتحقق من المصدر أولًا", "ج) قد أضغط عليه بالخطأ"] },
+    { q: "أين تفضل حفظ ملفاتك؟", a: ["أ) في السحابة الإلكترونية", "ب) على الجهاز أو USB", "ج) لا أهتم بمكان الحفظ كثيرًا"] },
+    { q: "كيف تتعامل مع كلمات المرور؟", a: ["أ) كلمات قوية ومختلفة", "ب) أكرر نفس الكلمة", "ج) أنساها كثيرًا"] },
+    { q: "عندما يصدر جهاز أو تقنية جديدة:", a: ["أ) أجربها مباشرة", "ب) أنتظر تجارب الآخرين", "ج) أستخدمها فقط عند الحاجة"] },
+    { q: "ما نوع الأجهزة التي تفضلها؟", a: ["أ) مزايا كثيرة ومتطورة", "ب) بسيطة وعملية", "ج) أنيقة في الشكل"] },
+    { q: "إذا انقطع الإنترنت فجأة:", a: ["أ) أحاول إصلاح المشكلة بنفسي", "ب) أتواصل مع خدمة العملاء", "ج) أنتظر حتى تعود الخدمة"] },
+    { q: "كيف تفضل تعلم تقنية جديدة؟", a: ["أ) فيديوهات أو دورات", "ب) بالتجربة المباشرة", "ج) بسؤال الأشخاص الخبراء"] },
+    { q: "لو أتيح لك ابتكار تطبيق:", a: ["أ) يسهل حياة الناس", "ب) للتعلم والمعرفة", "ج) للترفيه والمتعة"] },
+    { q: "ما أكثر ما يزعجك في التقنية؟", a: ["أ) كثرة التحديثات", "ب) التعقيد وصعوبة الاستخدام", "ج) استهلاك الوقت"] },
+    { q: "كيف ترى مستقبل التقنية؟", a: ["أ) أكثر ذكاءً", "ب) أكثر تواصلًا", "ج) أكثر متعة"] },
+    { q: "ما رأيك في الذكاء الاصطناعي؟", a: ["أ) فرصة عظيمة", "ب) أداة تحتاج إلى تنظيم وحذر", "ج) قد يشكل خطرًا في المستقبل"] },
+    { q: "لو خيرت بتجربة تقنية مستقبلية، تختار:", a: ["أ) السفر عبر الواقع الافتراضي", "ب) منزل ذكي متكامل", "ج) سيارة ذاتية القيادة"] }
+];
+
+const answers = [];
+let current = 0;
+
+function showQuestion() {
+    if (current < questions.length) {
+        const quizDiv = document.getElementById("quiz");
+        quizDiv.innerHTML = `<div class="question"><strong>${questions[current].q}</strong></div>`;
+        questions[current].a.forEach((ans, i) => {
+            const btn = document.createElement("button");
+            btn.innerText = ans;
+            btn.className = i === 0 ? "explorer" : i === 1 ? "practical" : "traditional";
+            btn.onclick = () => { answers.push(i); current++; showQuestion(); };
+            quizDiv.appendChild(btn);
+        });
+    } else {
+        calculateResult();
+    }
+}
+
+function calculateResult() {
+    let explorer = 0, practical = 0, traditional = 0;
+    answers.forEach(ans => {
+        if (ans === 0) explorer++;
+        else if (ans === 1) practical++;
+        else traditional++;
+    });
+
+    let max = Math.max(explorer, practical, traditional);
+    let resultText = "";
+
+    if (explorer === max && explorer > practical && explorer > traditional) {
+        resultText = `
+<img src="https://img.icons8.com/emoji/96/000000/magnifying-glass-emoji.png" class="person-icon"/>
+🌟 <strong>المستكشف التقني</strong><br>
+🔹 يحب تجربة كل جديد واكتشافه بنفسه.<br>
+🔹 فضوله الرقمي كبير ويحرص على التعلم الذاتي.<br>
+✨ شعاره: “دعني أجرب وأرى النتائج”.
+        `;
+    } else if (practical === max && practical > explorer && practical > traditional) {
+        resultText = `
+<img src="https://img.icons8.com/emoji/96/000000/gear-emoji.png" class="person-icon"/>
+⚙️ <strong>المستخدم العملي</strong><br>
+🔹 يرى التقنية وسيلة لإنجاز المهام العملية.<br>
+🔹 يركز على الوظيفة والفائدة أكثر من الشكل أو الحداثة.<br>
+✨ شعاره: “التقنية وسيلة وليست غاية”.
+        `;
+    } else if (traditional === max && traditional > explorer && traditional > practical) {
+        resultText = `
+<img src="https://img.icons8.com/emoji/96/000000/party-popper.png" class="person-icon"/>
+🎉 <strong>التقليدي/الاجتماعي</strong><br>
+🔹 يفضل البساطة وسهولة الاستخدام.<br>
+🔹 يستخدم التقنية للتواصل والترفيه.<br>
+✨ شعاره: “الأبسط يكفيني”.
+        `;
+    } else if (explorer === practical && explorer > traditional) {
+        resultText = `
+<img src="https://img.icons8.com/emoji/96/000000/light-bulb-emoji.png" class="person-icon"/>
+🎨 <strong>المبدع المنتج (مستكشف + عملي)</strong><br>
+🔹 يجمع بين حب الاكتشاف والفضول التقني وبين التركيز على الفائدة العملية.<br>
+🔹 يحرص على تجربة الجديد لتحقيق أفضل النتائج.<br>
+✨ شعاره: “أجرب الجديد لأحقق أفضل الإنجازات”.
+        `;
+    } else if (explorer === traditional && explorer > practical) {
+        resultText = `
+<img src="https://img.icons8.com/emoji/96/000000/rocket-emoji.png" class="person-icon"/>
+🚀 <strong>المغامر المرح (مستكشف + تقليدي)</strong><br>
+🔹 يحب التقنية كوسيلة للاكتشاف والمتعة.<br>
+🔹 يمزج بين الفضول الرقمي وحب المرح الاجتماعي والترفيه.<br>
+✨ شعاره: “التقنية متعة واكتشاف”.
+        `;
+    } else if (practical === traditional && practical > explorer) {
+        resultText = `
+<img src="https://img.icons8.com/emoji/96/000000/folder-emoji.png" class="person-icon"/>
+📂 <strong>المنظم الهادئ (عملي + تقليدي)</strong><br>
+🔹 يفضل الأجهزة البسيطة والعملية التي تخدمه بدون تعقيد.<br>
+🔹 يميل للاستقرار أكثر من التغيير، ويحب تنظيم أموره الرقمية بهدوء.<br>
+✨ شعاره: “التقنية تخدمني بدون إزعاج”.
+        `;
+    } else if (explorer === practical && explorer === traditional) {
+        resultText = `
+<img src="https://img.icons8.com/emoji/96/000000/balance-scale-emoji.png" class="person-icon"/>
+⚖️ <strong>المتوازن الرقمي</strong><br>
+🔹 يعرف كيف يوازن بين الاستكشاف، العملية، والمتعة.<br>
+🔹 يتبنى الشخصية التي تناسب الموقف حسب حاجته.<br>
+✨ شعاره: “لكل وقت شخصية تقنية تناسبني”.
+        `;
+    }
+
+    document.getElementById("quiz").style.display = "none";
+    document.getElementById("result").innerHTML = resultText;
+}
+
+showQuestion();
+</script>
+
+</body>
+</html>
